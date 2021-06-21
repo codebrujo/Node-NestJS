@@ -2,15 +2,19 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './modules/main/app.module';
 import { setupSwagger } from './swagger';
-import { useContainer } from 'class-validator';
-import { TrimStringsPipe } from 'modules/common/transformer/trim-strings.pipe';
+
+declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   setupSwagger(app);
   app.enableCors();
-  app.useGlobalPipes(new TrimStringsPipe(), new ValidationPipe());
-  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000);
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();
