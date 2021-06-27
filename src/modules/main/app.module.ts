@@ -6,6 +6,7 @@ import { ConfigModule, ConfigService } from 'modules/config';
 import { AuthModule } from 'modules/auth';
 import { CommonModule } from 'modules/common';
 import { StocksModule } from '../stock/stock.module';
+import { LoggerModule } from 'modules/logger/logger.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { StocksModule } from '../stock/stock.module';
     AuthModule,
     CommonModule,
     StocksModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
