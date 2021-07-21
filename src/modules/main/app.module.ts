@@ -7,6 +7,12 @@ import { AuthModule } from 'modules/auth';
 import { CommonModule } from 'modules/common';
 import { StocksModule } from '../stock/stock.module';
 import { LoggerModule } from 'modules/logger/logger.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { AxiosRequestInterceptor } from './axios-request.interceptor';
+import { ASYNC_STORAGE } from 'modules/logger/constants';
+import { AsyncLocalStorage } from 'async_hooks';
+
+const asyncLocalStorage = new AsyncLocalStorage();
 
 @Module({
   imports: [
@@ -33,6 +39,12 @@ import { LoggerModule } from 'modules/logger/logger.module';
     LoggerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: ASYNC_STORAGE,
+      useValue: asyncLocalStorage
+    },
+  ],
 })
 export class AppModule {}

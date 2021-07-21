@@ -11,7 +11,7 @@ const pino = pinoLogger({
 export class PinoLoggerService implements LoggerService {
   constructor(
     @Inject(ASYNC_STORAGE)
-    private readonly asyncStorage: AsyncLocalStorage<Map<string, string>>) {
+    private readonly asyncStore: AsyncLocalStorage<Map<string, string>>) {
     
   }
   private getMessage(message: any, context?: string) {
@@ -19,18 +19,18 @@ export class PinoLoggerService implements LoggerService {
   }
 
   log(message: any, context?: string) {
-    const traceId = this.asyncStorage.getStore()?.get('traceId');
+    const traceId = this.asyncStore.getStore()?.get('traceId');
     pino.info({ traceId }, this.getMessage(message, context));
   }
   error(message: any, trace?: string, context?: string) {
-    const traceId = this.asyncStorage.getStore()?.get('traceId');
+    const traceId = this.asyncStore.getStore()?.get('traceId');
     pino.error({ traceId }, this.getMessage(message, context));
     if (trace) {
       pino.error(trace);
     }
   }
   warn(message: any, context?: string) {
-    const traceId = this.asyncStorage.getStore()?.get('traceId');
+    const traceId = this.asyncStore.getStore()?.get('traceId');
     pino.warn({ traceId }, this.getMessage(message, context));
   }
  
