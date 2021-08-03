@@ -1,16 +1,18 @@
-import { Injectable, NotAcceptableException } from '@nestjs/common';
+import { HttpService, Injectable, NotAcceptableException } from '@nestjs/common';
 import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { StockEntity } from './stock.entity';
+import { WRK_PRICE_PATH } from './constants';
 
 @Injectable()
 export class StocksService {
   constructor(
     @InjectRepository(StockEntity)
     private readonly stockRepository: Repository<StockEntity>,
+    private readonly httpService: HttpService,
   ) {}
 
 
@@ -41,7 +43,8 @@ export class StocksService {
     return await this.stockRepository.save(this.stockRepository.create(payload));
   }
 
-  async updateFromExternalService(payload: unknown[][]) {
+  async updateFromExternalService() {
+    const payload = (await this.httpService.get(WRK_PRICE_PATH).toPromise()).data.securities.data;
     const promiseArray = payload.map( async (item: [string, number]) => {
       const stockItem = await this.stockRepository.findOne({ ticker: item[0] });
       if (stockItem) {
